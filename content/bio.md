@@ -1,5 +1,5 @@
-I am a PhD student at the School of Science, University of Example, advised by [Prof. Advisor One](https://example.com) and [Dr. Advisor Two](https://example.com).
+I am a PhD student at the Department of Electrical and Computer Engineering, National University of Singapore, advised by [Prof. Biplab Sikdar](https://cde.nus.edu.sg/ece/staff/biplab-sikdar/) and [Dr. Prosanta Gope](https://sites.google.com/view/prosantagope).
 
-Prior to this, I obtained a BSc degree with First Class Honours in Natural Science from the University of Example.
+Prior to this, I received the B.Eng. degree from Beijing University of Technology in 2021 and the M.Sc. degree in computer science from The University of Sheffield in 2022. 
 
-My current research focuses on investigating the mathematical principles of natural philosophy.
+My current research interests include 5G and next-generation communication security, privacy-preserving machine learning, and deep learning.

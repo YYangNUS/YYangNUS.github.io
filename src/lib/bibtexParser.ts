@@ -62,11 +62,17 @@ export function parseBibTeX(bibtexContent: string): Publication[] {
     // Parse preview field (remove braces if present)
     const preview = tags.preview?.replace(/[{}]/g, '');
 
+    const ccfRankRaw = tags.ccf_rank || tags.ccf || tags.ccfrank;
+    const ccfRank = ccfRankRaw ? ccfRankRaw.toUpperCase() : undefined;
+    const securityTier = tags.security_category || tags.securitytier || tags.security;
+
     // Create publication object
     const publication: Publication = {
       id: entry.citationKey || tags.id || `pub-${Date.now()}-${index}`,
       title: cleanBibTeXString(tags.title || 'Untitled'),
       authors,
+      ccfRank: ccfRank === 'A' || ccfRank === 'B' || ccfRank === 'C' ? ccfRank : undefined,
+      securityTier: securityTier ? cleanBibTeXString(securityTier) : undefined,
       year,
       month: monthMapping[tags.month?.toLowerCase()] ? String(month) : tags.month,
       type,
@@ -90,7 +96,7 @@ export function parseBibTeX(bibtexContent: string): Publication[] {
       preview,
 
       // Store original BibTeX (excluding custom fields)
-      bibtex: reconstructBibTeX(entry, ['selected', 'preview', 'description', 'keywords', 'code']),
+      bibtex: reconstructBibTeX(entry, ['selected', 'preview', 'description', 'keywords', 'code', 'ccf', 'ccfrank', 'ccf_rank', 'security', 'securitytier', 'security_category']),
     };
 
     // Clean up undefined fields

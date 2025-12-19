@@ -15,6 +15,31 @@ import { Publication } from '@/types/publication';
 import { PublicationPageConfig } from '@/types/page';
 import { cn } from '@/lib/utils';
 
+const ccfBadgeColors = {
+    A: 'bg-rose-500',
+    B: 'bg-amber-500',
+    C: 'bg-emerald-600',
+};
+
+const securityBadgeStyles: Record<string, { label: string; color: string }> = {
+    ccs: { label: 'ACM CCS', color: 'bg-indigo-600' },
+    'ieee s&p': { label: 'IEEE S&P', color: 'bg-yellow-600' },
+    'ieee sp': { label: 'IEEE S&P', color: 'bg-yellow-600' },
+    's&p': { label: 'IEEE S&P', color: 'bg-yellow-500' },
+    "usenix security": { label: 'USENIX Security', color: 'bg-sky-600' },
+    ndss: { label: 'NDSS', color: 'bg-teal-600' },
+};
+
+const badgeBaseClass = 'inline-flex items-center rounded-full text-white text-xs font-semibold px-3 py-1 shadow-sm whitespace-nowrap';
+
+const MotionDiv = motion.div;
+
+function getSecurityBadge(tier?: string) {
+    if (!tier) return null;
+    const normalized = tier.trim().toLowerCase().replace(/\\&/g, '&');
+    return securityBadgeStyles[normalized] ?? { label: tier, color: 'bg-slate-600' };
+}
+
 interface PublicationsListProps {
     config: PublicationPageConfig;
     publications: Publication[];
@@ -57,7 +82,7 @@ export default function PublicationsList({ config, publications, embedded = fals
     }, [publications, searchQuery, selectedYear, selectedType]);
 
     return (
-        <motion.div
+        <MotionDiv
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -101,7 +126,7 @@ export default function PublicationsList({ config, publications, embedded = fals
 
                 <AnimatePresence>
                     {showFilters && (
-                        <motion.div
+                        <MotionDiv
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
@@ -176,7 +201,7 @@ export default function PublicationsList({ config, publications, embedded = fals
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
+                        </MotionDiv>
                     )}
                 </AnimatePresence>
             </div>
@@ -188,14 +213,31 @@ export default function PublicationsList({ config, publications, embedded = fals
                         No publications found matching your criteria.
                     </div>
                 ) : (
-                    filteredPublications.map((pub, index) => (
-                        <motion.div
-                            key={pub.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, delay: 0.1 * index }}
-                            className="bg-white dark:bg-neutral-900 p-6 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-200"
-                        >
+                    filteredPublications.map((pub, index) => {
+                        const securityBadge = getSecurityBadge(pub.securityTier);
+                        const hasMetaBadge = Boolean(pub.ccfRank || securityBadge);
+                        return (
+                            <MotionDiv
+                                key={pub.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.4, delay: 0.1 * index }}
+                                className="relative bg-white dark:bg-neutral-900 p-6 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-200"
+                            >
+                                {hasMetaBadge && (
+                                    <div className="absolute -top-3 right-4 flex flex-row items-center gap-2">
+                                        {securityBadge && (
+                                            <span className={cn(badgeBaseClass, securityBadge.color)}>
+                                                {securityBadge.label}
+                                            </span>
+                                        )}
+                                        {pub.ccfRank && (
+                                            <span className={cn(badgeBaseClass, ccfBadgeColors[pub.ccfRank] ?? 'bg-neutral-700')}>
+                                                CCF {pub.ccfRank}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
                             <div className="flex flex-col md:flex-row gap-6">
                                 {pub.preview && (
                                     <div className="w-full md:w-48 flex-shrink-0">
@@ -290,7 +332,7 @@ export default function PublicationsList({ config, publications, embedded = fals
 
                                     <AnimatePresence>
                                         {expandedAbstractId === pub.id && pub.abstract ? (
-                                            <motion.div
+                                            <MotionDiv
                                                 key="abstract"
                                                 initial={{ opacity: 0, height: 0 }}
                                                 animate={{ opacity: 1, height: 'auto' }}
@@ -302,10 +344,10 @@ export default function PublicationsList({ config, publications, embedded = fals
                                                         {pub.abstract}
                                                     </p>
                                                 </div>
-                                            </motion.div>
+                                            </MotionDiv>
                                         ) : null}
                                         {expandedBibtexId === pub.id && pub.bibtex ? (
-                                            <motion.div
+                                            <MotionDiv
                                                 key="bibtex"
                                                 initial={{ opacity: 0, height: 0 }}
                                                 animate={{ opacity: 1, height: 'auto' }}
@@ -327,15 +369,16 @@ export default function PublicationsList({ config, publications, embedded = fals
                                                         <ClipboardDocumentIcon className="h-4 w-4" />
                                                     </button>
                                                 </div>
-                                            </motion.div>
+                                            </MotionDiv>
                                         ) : null}
                                     </AnimatePresence>
                                 </div>
                             </div>
-                        </motion.div>
-                    ))
+                        </MotionDiv>
+                    );
+                    })
                 )}
             </div>
-        </motion.div>
+        </MotionDiv>
     );
 }

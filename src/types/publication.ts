@@ -13,6 +13,8 @@ export interface Publication {
   id: string;
   title: string;
   authors: Author[];
+  ccfRank?: 'A' | 'B' | 'C';
+  securityTier?: string;
   abstract?: string;
   journal?: string;
   conference?: string;
@@ -77,4 +79,3 @@ export type ResearchArea =
   | 'transformer-architectures'
   | 'biomedical-engineering'
   | 'other';
-

@@ -3,9 +3,11 @@ title = "About"
 
 [profile]
 research_interests = [
-  "Computational Physics",
-  "Mathematical Principles",
-  "Proof of Theorems"
+  "5G Network Security",
+  "Applied Cryptography",
+  "Cyber-Physical Systems Security",
+  "LLM Security",
+  "Privacy-preserving Machine Learning"
 ]
 
 [[sections]]
